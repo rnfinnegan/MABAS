@@ -1,0 +1,93 @@
+// B-Spline transformation
+
+//ImageTypes
+(FixedInternalImagePixelType "float")
+(FixedImageDimension 3)
+(MovingInternalImagePixelType "float")
+(MovingImageDimension 3)
+
+//Components
+(Registration "MultiMetricMultiResolutionRegistration")
+(FixedImagePyramid "FixedRecursiveImagePyramid")
+(MovingImagePyramid "MovingRecursiveImagePyramid")
+(Transform "BSplineTransform")
+(Interpolator "BSplineInterpolator")
+(Optimizer "AdaptiveStochasticGradientDescent")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+(Metric "AdvancedMeanSquares")
+
+(AutomaticScalesEstimation "true")
+
+// ::::::::::::::::::::::::::::: Parameters to tune :::::::::::::::::::::::::::::::::::::::
+
+// :::: Pyramid
+(NumberOfResolutions 3)
+(ImagePyramidSchedule  4 4 4    2 2 2   1 1 1)
+
+
+// :::: Optimizer - StandardGradientDescent ::::
+
+// Maximum number of iterations
+(MaximumNumberOfIterations 256 256 128)
+(AutomaticParameterEstimation "true")
+(UseAdaptiveStepSizes "true")
+(NumberOfGradientMeasurements 10)
+
+
+
+// :::: Transform ::::
+// Grid of control points
+// This grid is defined by the spacing between the grid nodes, in voxel size
+// For each resolution level you can define a different grid spacing. This is what we call multi-grid.
+// The GridSpacingSchedule defines the multiplication factors for all resolution levels.
+(FinalGridSpacingInPhysicalUnits 6.0 6.0 6.0)
+(GridSpacingSchedule 4.0 4.0 4.0 2.0 2.0 2.0 1.0 1.0 1.0)
+
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+// :::: Transform ::::
+// Whether transforms are combined by composition or by addition.
+// In generally, Compose is the best option in most cases.
+// It does not influence the results very much.
+(HowToCombineTransforms "Compose")
+
+
+// :::: Several ::::
+(ErodeMask "false" )
+(WriteTransformParametersEachIteration "false")
+(WriteResultImage "true")
+(CompressResultImage "true")
+(WriteResultImageAfterEachResolution "false")
+(ShowExactMetricValue "false")
+
+
+// :::: ImageSampler ::::
+(ImageSampler "Grid")
+(NumberOfSpatialSamples 1024 1024 2048 )
+(FixedImageBSplineInterpolationOrder 1 )
+(NewSamplesEveryIteration "true")
+(CheckNumberOfSamples "false")
+(MaximumNumberOfSamplingAttempts 3)
+
+
+// :::: Interpolator and Resampler ::::
+//Order of B-Spline interpolation used in each resolution level:
+// It may improve accuracy if you set this to 3. Never use 0.
+(BSplineInterpolationOrder 3)
+
+//Order of B-Spline interpolation used for applying the final
+// deformation.
+// 3 gives good accuracy.
+// 1 gives worse accuracy (linear interpolation)
+// 0 gives worst accuracy, but may be appropriate for
+// binary images; this would be equivalent to nearest neighbor
+// interpolation.
+(FinalBSplineInterpolationOrder 3)
+
+//Default pixel value for pixels that come from outside the picture:
+(DefaultPixelValue -1024)
+
+(UseDirectionCosines "true")

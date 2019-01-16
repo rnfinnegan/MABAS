@@ -1,0 +1,99 @@
+This document provides a basic overview of the processing pipeline for MABAS.
+
+#######################################################################################################################
+
+What you will need to provide:
+	- input data in the form of NIFTI files. A utility program (SortDICOMDirectory.py) is provided to enable conversion between DICOM image and structure files to the NIFTI format.
+	- installation of ITK (C++) and SimpleElastix/SimpleITK (Python >=3.6)
+
+
+To explain the process the following directory structure is assumed:
+
+	> Inputs/
+		> Case_01.nii.gz
+		> Case_01_HEART.nii.gz
+
+	> Atlases/
+		>Images/
+			> Case_10.nii.gz
+			> Case_20.nii.gz
+			> Case_30.nii.gz
+		>Structures/
+			> Case_10_HEART.nii.gz
+			> Case_20_HEART.nii.gz
+			> Case_30_HEART.nii.gz
+
+	> Outputs/
+		> Registration/
+			> Rigid/
+				> LeaveOut01/
+					> Structures/
+			> Demons/
+				> LeaveOut01/
+					> Structures/
+
+All commands for this example can be found in <RunAll.sh>
+
+
+#######################################################################################################################
+
+
+Basic segmentation procedure:
+
+	** Repeat steps 1-4 for all atlases **
+
+	Step 1: Rigid registration
+		Using <Python/RigidRegistrationElastix.py>
+
+		$ RigidRegistrationElastix.py 	./Inputs/Case_01.nii.gz \
+										./Atlases/Images/Case_10.nii.gz \
+										./Registration/Rigid/LeaveOut01/Case_10_to_Case_01_RIGID \
+										../ParameterFiles/RigidTransformParameters.txt \
+										./ 0
+
+	
+	Step 2: Propagate the rigid transformation to the structure images
+		Using <Python/PropagateRigidTransform.py>
+
+		$ PropagateRigidTransform.py	./Inputs/Case_01.nii.gz \
+										./Atlases/Case_10.nii.gz \
+										./Registration/Rigid/LeaveOut01/Case_10_to_Case_01_RIGID.txt \
+										0 \
+										1 \
+										./Registration/Rigid/LeaveOut01/Structures/Case_10_to_Case_01_HEART_RIGID.nii.gz
+
+
+
+	Step 3: Deformable registration
+		Provided are tools to perform B-Splines or Demons-based registration. This example will use Demons-based DIR.
+		Using <C++/bin/itkMultiResFSDRegistration>
+
+		$ itkMultiResFSDRegistration	./Inputs/Case_01.nii.gz \
+										./Registration/Rigid/LeaveOut01/Case_10_to_Case_01_RIGID.nii.gz \
+										./Registration/Demons/LeaveOut01/Case_10_to_Case_01_DEMONS.nii.gz \
+										./Registration/Demons/LeaveOut01/Case_10_to_Case_01_DEMONS_FIELD.nii.gz \
+										1.5 \
+										0
+
+
+	Step 4: Propagate the deformable registration transformation to the structure images
+		Using <Python/ApplyDemonsDeformationField.py>
+
+		$ ApplyDemonsDeformationField.py	./Registration/Demons/LeaveOut01/Case_10_to_Case_01_DEMONS_FIELD.nii.gz \
+											./Registration/Demons/LeaveOut01/Structures/Case_10_to_Case_01_HEART_DEMONS.nii.gz \
+											1 \
+											0 \
+											./Registration/Rigid/LeaveOut01/Structures/Case_10_to_Case_01_HEART_RIGID.nii.gz \
+
+
+	Step 5: Combine labels using (unweighted, global, local, block)-weighted voting or STAPLE
+		Using <Python/LabelFusion.py>
+
+		$ LabelFusion.py	./Inputs/Case_01.nii.gz \
+							./Registration/Demons/LeaveOut01 \
+							./Registration/Demons/LeaveOut01/Structures/Case_{0}_to_Case_{1}_{2}_DEMONS.nii.gz \
+							local \
+							structures.txt \
+							Output/Case_01_{0}_LOCALVOTE_{1}.nii.gz
+
+
