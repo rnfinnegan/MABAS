@@ -19,3 +19,5 @@ Dependencies:
   - C++ ITK installation
 
 This code is intended for research purposes only, and it subject to the LICENSE included in this repository.
+
+Please see <Workflow.txt> for more information on how to use this software to perform MABAS!
