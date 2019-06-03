@@ -3,6 +3,11 @@ Tools for [M]ulti-[A]tlas [B]ased [A]utomatic [S]egmentation
 Robert Finnegan, 2019.
 For questions please contact: robert.finnegan [at] sydney.edu.au
 
+Please cite:
+Finnegan, R., Dowling, J., Koh, E.-S., Tang, S., Otton, J., Delaney, G., … Holloway, L. (2019). 
+Feasibility of multi-atlas cardiac segmentation from thoracic planning CT in a probabilistic framework. 
+Physics in Medicine & Biology, 64(8), 085006. https://doi.org/10.1088/1361-6560/ab0ea6
+
 Dependencies:
   - Python >=3.6
     Requisite packages:
