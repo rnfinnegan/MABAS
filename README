@@ -1,28 +1,9 @@
 Tools for [M]ulti-[A]tlas [B]ased [A]utomatic [S]egmentation
 
-Robert Finnegan, 2019.
-For questions please contact: robert.finnegan [at] sydney.edu.au
+This repository has been updated and renamed, please see:
 
-Please cite:
-Finnegan, R., Dowling, J., Koh, E.-S., Tang, S., Otton, J., Delaney, G., … Holloway, L. (2019). 
-Feasibility of multi-atlas cardiac segmentation from thoracic planning CT in a probabilistic framework. 
-Physics in Medicine & Biology, 64(8), 085006. https://doi.org/10.1088/1361-6560/ab0ea6
+https://github.com/rnfinnegan/SimpleSeg
 
-Dependencies:
-  - Python >=3.6
-    Requisite packages:
-    - NumPy
-    - SimpleITK (>=1.1.0) with SimpleElastix built
-    - functools
-    - os
-    - sys
-    - re
-    - SciKit
-    - shutil
-    - pydicom
+Robert Finnegan, 2020.
+For questions please contact: robert [dot] finnegan [at] sydney [dot] edu [dot] au
 
-  - C++ ITK installation
-
-This code is intended for research purposes only, and it subject to the LICENSE included in this repository.
-
-Please see <Workflow.txt> for more information on how to use this software to perform MABAS!
